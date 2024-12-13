@@ -6,11 +6,16 @@ import ExpenseCategory from '../../components/Home/ExpenseCategory'
 import Expenses from '../../components/Home/Expenses';
 import { useNavigation } from '@react-navigation/native';
 import { Colors } from '../../constants/Colors';
-
+import {useRouter} from 'expo-router'
 
 
 export default function Overview() {
   const navigation = useNavigation();
+
+  const router = useRouter();
+  const onPlusClick=()=>{
+          router.push('expense/add-expense')
+   }
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f0f0f0' }} // for parent View
@@ -26,10 +31,7 @@ export default function Overview() {
         {/* Floating Button */}
       <TouchableOpacity
         style={styles.floatingButton}
-         onPress={() => {
-          console.log('Navigating to AddExpense');
-          navigation.navigate('AddExpense')
-        }}
+        onPress={() => onPlusClick()}
       >
         <Text style={styles.plusIcon}>+</Text>
       </TouchableOpacity>

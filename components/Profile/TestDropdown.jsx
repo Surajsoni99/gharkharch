@@ -3,7 +3,7 @@ import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import Dropdown from "./../DropDown";
-import { countries } from "../../utils/categories";
+import { countries } from "../../utils/countries";
 
 const formattedCountries = countries.map((c) => ({
   value: c.label,

@@ -9,7 +9,7 @@ export default function incomes() {
         fontSize:30,
         marginTop:60
       }}>incomes: Coming Soon!!!</Text>
-      <TestDropdown/>
+      {/* <TestDropdown/> */}
     </View>
     
   );
