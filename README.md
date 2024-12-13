@@ -52,3 +52,4 @@ Join our community of developers creating universal apps.
 
 ## ToDO
 - Add captcha in Authentication later
+- Add navigator
