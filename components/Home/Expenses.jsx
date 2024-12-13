@@ -4,11 +4,13 @@ import { db } from '../../configs/FirebaseConfig'
 import { collection, getDocs, query } from 'firebase/firestore'
 import { Colors } from '../../constants/Colors'
 import ExpenseItem from './ExpenseItem'
+import { useRouter } from 'expo-router'
 
 
 export default function Expenses() {
 
     const [expensesList, setExpensesList]=useState([]);
+    const router = useRouter();
       useEffect(()=>{
         GetExpensesList()
       },[])
@@ -51,7 +53,10 @@ export default function Expenses() {
                   <ExpenseItem 
                   expense={item}
                   key={index}
-                  onExpensePress={(expense)=>console.log(expense)}
+                  onExpensePress={(expense)=> 
+                    //console.log(item.Subcategory)
+                    router.push('/expenselist/'+ item.Subcategory)
+                    }
                   />
                 )}
                 ListEmptyComponent={

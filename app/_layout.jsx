@@ -53,7 +53,9 @@ export default function RootLayout() {
         <SignedIn>
           {/* This block is rendered if the user is signed in */}
           {console.log("User is Signed In")}
-          <Stack>
+          <Stack screenOptions={{
+            headerShown: false
+          }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
         </SignedIn>
