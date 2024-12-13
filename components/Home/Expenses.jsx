@@ -28,9 +28,8 @@ export default function Expenses() {
             padding:10,
             display:'flex',
             flexDirection: 'row',
-            justifyContent: 'space-between',
-            marginTop: 10
-          }}>
+            justifyContent: 'space-between'
+              }}>
           <Text
           style={{
             fontSize: 20,
