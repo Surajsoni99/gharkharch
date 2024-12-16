@@ -8,7 +8,9 @@ import Dropdown from "./../../components/DropDown";
 import { categories } from "../../utils/categories";
 import Toast from 'react-native-toast-message';
 import { db } from '../../configs/FirebaseConfig'
-import { setDoc, doc } from 'firebase/firestore'
+import { setDoc, doc, Timestamp } from 'firebase/firestore'
+import {useRouter} from 'expo-router'
+
 
 
 
@@ -28,6 +30,8 @@ export default function AddExpense() {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(Date.now());
   const [loading, setLoading]=useState(false);
+  const [id,setId] = useState("")
+  const router = useRouter();
 
 
   const showDatePicker = () => {
@@ -58,15 +62,18 @@ export default function AddExpense() {
   const saveExpenseDetails = async () => {
     setLoading(true);
     try {
+      const docId = Date.now().toString(); 
       // Saving the expense details to Firestore
-      await setDoc(doc(db, "Expenses", Date.now().toString()), {
+      const firestoreTimestamp = Timestamp.fromDate(new Date(selectedDate || Date.now()));
+      setId(docId); 
+      await setDoc(doc(db, "Expenses", docId), {
         amount: amount,
         description: description,
         Subcategory: category,
-        date: date,
+        date: firestoreTimestamp,
+        id: docId
       });
       setLoading(false);
-
       // Show success toast after saving the data
       Toast.show({
         type: "success",
@@ -74,6 +81,9 @@ export default function AddExpense() {
         text2: "Your expense has been saved successfully!",
         position: "bottom", // Toast position
       });
+      setTimeout(() => {
+        router.push("/"); // Replace '/' with your actual home route
+      }, 1000); 
     } catch (error) {
       setLoading(false);
       // Handle any errors during saving
@@ -169,7 +179,7 @@ export default function AddExpense() {
           marginTop: 10,
         }}
         onPress={()=>
-          //console.log(category)
+          //console.log(id)
           saveExpenseDetails()
         }
       >
