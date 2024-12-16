@@ -17,10 +17,10 @@ export default function ExpenseItem({expense, onExpensePress}) {
     
       return (
         <TouchableOpacity
-          onPress={() => onExpensePress(expense)}
-          style={styles.container}
-        >
-          <Image
+          onPress={() => onExpensePress(expense)}>
+            <View style={styles.container}>
+            
+            <Image
             source={{ uri: expense.icon }}
             style={styles.icon}
           />
@@ -34,6 +34,7 @@ export default function ExpenseItem({expense, onExpensePress}) {
               <Text style={styles.amount}>{`₹${expense.amount}`}</Text>
             </View>
           </View>
+            </View>
         </TouchableOpacity>
       )
 }
@@ -43,7 +44,6 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
       padding: 1,
-      backgroundColor: Colors.ICON_BG,
       borderRadius: 10,
       marginVertical: 8,
     },
