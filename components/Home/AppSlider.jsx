@@ -1,114 +1,113 @@
-import { View, Text, FlatList,StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import {db} from '../../configs/FirebaseConfig'
-import { collection, getDocs, query } from 'firebase/firestore'
+import React, { useContext } from 'react';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { ExpensesContext } from '../../components/ExpensesContext';
 import { Colors } from '../../constants/Colors';
 
+export default function AppSlider({ onIncrementMonth, onDecrementMonth }) {
+  const { currentMonth, expensesList } = useContext(ExpensesContext);
 
-const sliderList = [
-  {
-    id: "1",
-    name1: "Total Expense",
-    value1: "4000",
-    name2: "Month Budget",
-    value2: "0",
-    name3: "Savings",
-    value3: "0",
-    name4: "Daily Average",
-    value4: "130",
-  },
-  {
-    id: "2",
-    name1: "Transactions",
-    value1: "13",
-    name2: "Most Spent Category",
-    value2: "Household",
-    name3: "Highest Spend",
-    value3: "1330",
-    name4: "Most Frequent",
-    value4: "Tea",
-  }
-];
-
-
-export default function Slider() {
-
-  //const [sliderList, setSliderList] = useState([]);
-  useEffect(() => {
-    //GetSliderList();
-  }, []);
-
-  const GetSliderList = async () => {
-    try {
-      console.log("Fetching slider list...");
-
-      const q = query(collection(db, 'Slider'));
-
-      // Fetch documents from the collection
-      const querySnapShot = await getDocs(q);
-      console.log("Query Snapshot:", querySnapShot);
-
-      // Iterate through each document in the snapshot
-      querySnapShot.forEach((doc) => {
-        console.log("Document Data:", doc.data());
-        console.log("Document ID:", doc.id);
-        setSliderList(prev=> [...prev, doc.data()])
-      });
-    } catch (error) {
-      console.error("Error fetching slider list:", error);
-    }
+  // Helper function to format month display
+  const getFormattedMonth = (date) => {
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   };
+
+  // Helper function to calculate the total expense
+  const calculateTotalExpense = () => {
+    console.log("Expense Data: ", expensesList);  // Log the expenses list
+
+    const total = expensesList.reduce((sum, item) => {
+      const amount = parseFloat(item.amount);
+      console.log(`Amount for ${item.description}: `, amount);  // Log each expense amount
+      return sum + amount;
+    }, 0);
+
+    console.log("Total Expense Calculation: ", total);  // Log the total expense
+    return total;
+  };
+
+  // Helper function to calculate the daily average
+  const calculateDailyAverage = () => {
+    const totalExpense = calculateTotalExpense();
+    const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+    console.log("Days in Month for Daily Average: ", daysInMonth);  // Log the number of days in the month
+    const dailyAverage = (totalExpense / daysInMonth).toFixed(2);
+    console.log("Daily Average Calculation: ", dailyAverage);  // Log the daily average
+    return dailyAverage;
+  };
+
+  // Sample data format adjustment for consistent UI rendering
+  const sliderList = [
+    {
+      id: '1',
+      name1: 'Total Expense',
+      value1: calculateTotalExpense(),
+      name2: 'Month Budget',
+      value2: '0', // Replace with actual budget logic if available
+      name3: 'Savings',
+      value3: '0', // Replace with actual savings calculation
+      name4: 'Daily Average',
+      value4: calculateDailyAverage(),
+    },
+    {
+      id: '2',
+      name1: 'Transactions',
+      value1: expensesList.length || 0,
+      name2: 'Most Spent Category',
+      value2: 'N/A', // Replace with logic for most spent category
+      name3: 'Highest Spend',
+      value3: Math.max(...expensesList.map((item) => parseFloat(item.amount)), 0) || 0,
+      name4: 'Most Frequent',
+      value4: 'N/A', // Replace with logic for most frequent transaction
+    },
+  ];
 
   return (
     <View>
-      <Text
-        style={{
-          fontSize: 20,
-          fontFamily: "outfit-bold",
-          paddingLeft: 20,
-          paddingTop: 20,
-          marginBottom: 5,
-        }}
-      >
-        Summary
-      </Text>
+      {/* Header Section */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Summary</Text>
+        <View style={styles.monthNav}>
+          <TouchableOpacity onPress={onDecrementMonth}>
+            <Text style={styles.navText}>{'<'}</Text>
+          </TouchableOpacity>
+          <Text style={styles.monthText}>{getFormattedMonth(currentMonth)}</Text>
+          <TouchableOpacity onPress={onIncrementMonth}>
+            <Text style={styles.navText}>{'>'}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* FlatList Section */}
       <FlatList
         data={sliderList}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
         style={{ paddingLeft: 20 }}
-        keyExtractor={(item) => item.id} // Ensure unique keys
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            {/* Top Row */}
             <View style={styles.row}>
-              {/* Top Left */}
-              <View style={[styles.section, styles.topLeft]}>
+              <View style={styles.section}>
                 <View style={styles.valueContainer}>
                   <Text style={styles.bigText}>{item.value1}</Text>
                 </View>
                 <Text style={styles.smallText}>{item.name1}</Text>
               </View>
-              {/* Top Right */}
-              <View style={[styles.section, styles.topRight]}>
+              <View style={styles.section}>
                 <View style={styles.valueContainer}>
                   <Text style={styles.bigText}>{item.value2}</Text>
                 </View>
                 <Text style={styles.smallText}>{item.name2}</Text>
               </View>
             </View>
-
-            {/* Bottom Row */}
             <View style={styles.row}>
-              {/* Bottom Left */}
-              <View style={[styles.section, styles.bottomLeft]}>
+              <View style={styles.section}>
                 <View style={styles.valueContainer}>
                   <Text style={styles.bigText}>{item.value3}</Text>
                 </View>
                 <Text style={styles.smallText}>{item.name3}</Text>
               </View>
-              {/* Bottom Right */}
-              <View style={[styles.section, styles.bottomRight]}>
+              <View style={styles.section}>
                 <View style={styles.valueContainer}>
                   <Text style={styles.bigText}>{item.value4}</Text>
                 </View>
@@ -123,6 +122,31 @@ export default function Slider() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  monthNav: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  navText: {
+    fontSize: 20,
+    color: Colors.PRIMARY,
+    paddingHorizontal: 10,
+    fontFamily: 'outfit-bold'
+  },
+  monthText: {
+    fontSize: 20,
+    fontFamily: 'outfit-bold'
+  },
   card: {
     width: 360,
     height: 200,
@@ -144,7 +168,7 @@ const styles = StyleSheet.create({
   section: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center', // Center both box and text
+    alignItems: 'center',
     padding: 0,
   },
   valueContainer: {
@@ -156,18 +180,18 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 5, // Space between box and label
+    marginBottom: 5,
   },
   bigText: {
     fontSize: 26,
-    fontWeight: 'outfit-bold',
+    fontWeight: 'bold',
     color: Colors.PRIMARY,
     textAlign: 'center',
   },
   smallText: {
     fontSize: 12,
     color: '#000',
-    fontFamily: 'outfit-medium',
     textAlign: 'center',
+    fontFamily: 'outfit-medium'
   },
 });

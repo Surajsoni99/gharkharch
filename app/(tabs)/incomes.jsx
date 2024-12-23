@@ -1,6 +1,5 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import TestDropdown from './../../components/Profile/TestDropdown'
 
 export default function incomes() {
   return (
