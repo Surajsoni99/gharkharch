@@ -1,66 +1,68 @@
-import { View ,TouchableOpacity, Text, StyleSheet} from 'react-native'
-import React from 'react'
+// pages/overview.jsx
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import React, { useContext } from 'react';
 import Header from '../../components/Home/Header';
-import AppSlider from '../../components/Home/AppSlider'
-import ExpenseCategory from '../../components/Home/ExpenseCategory'
+import AppSlider from '../../components/Home/AppSlider';
+import ExpenseCategory from '../../components/Home/ExpenseCategory';
 import Expenses from '../../components/Home/Expenses';
-import { useNavigation } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
+import { ExpensesContext } from '../../components/ExpensesContext';
 import { Colors } from '../../constants/Colors';
-import {useRouter} from 'expo-router'
-
 
 export default function Overview() {
-  const navigation = useNavigation();
+    const router = useRouter();
+    const { currentMonth, setCurrentMonth } = useContext(ExpensesContext);
 
-  const router = useRouter();
-  const onPlusClick=()=>{
-          router.push('expense/add-expense')
-   }
+    const incrementMonth = () => {
+        const nextMonth = new Date(currentMonth);
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        setCurrentMonth(nextMonth);
+    };
 
-  return (
-    <View style={{ flex: 1, backgroundColor: '#f0f0f0' }} // for parent View
->
-        {/* Header */}
-        <Header/>
-        {/* Slider */ }
-        <AppSlider/>
-        {/* Expenses Category*/}
-        <ExpenseCategory/>
-        {/*Expenses*/}
-        <Expenses/>
-        {/* Floating Button */}
-      <TouchableOpacity
-        style={styles.floatingButton}
-        onPress={() => onPlusClick()}
-      >
-        <Text style={styles.plusIcon}>+</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    const decrementMonth = () => {
+        const prevMonth = new Date(currentMonth);
+        prevMonth.setMonth(prevMonth.getMonth() - 1);
+        setCurrentMonth(prevMonth);
+    };
+
+    const onPlusClick = () => {
+        router.push('expense/add-expense');
+    };
+
+    return (
+        <View style={{ flex: 1, backgroundColor: '#f0f0f0' }}>
+            {/* Header */}
+            <Header />
+            {/* Slider */}
+            <AppSlider onIncrementMonth={incrementMonth} onDecrementMonth={decrementMonth} />
+            {/* Expenses Category */}
+            <ExpenseCategory />
+            {/* Expenses */}
+            <Expenses />
+            {/* Floating Button */}
+            <TouchableOpacity style={styles.floatingButton} onPress={() => onPlusClick()}>
+                <Text style={styles.plusIcon}>+</Text>
+            </TouchableOpacity>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  floatingButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30, // Perfectly round button
-    backgroundColor: Colors.PRIMARY,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5, // Ensures it appears above other components
-  },
-  plusIcon: {
-    fontSize: 30,
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',  // Ensures the text is centered
-    lineHeight: 60,  // Ensures the text is vertically centered in the circle
-  },
+    floatingButton: {
+        position: 'absolute',
+        bottom: 20,
+        right: 20,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: Colors.PRIMARY,
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 5,
+    },
+    plusIcon: {
+        fontSize: 30,
+        color: '#fff',
+        fontWeight: 'bold',
+    },
 });
